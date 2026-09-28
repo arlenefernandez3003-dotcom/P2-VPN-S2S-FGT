@@ -61,8 +61,8 @@ Toda la configuración y demostración de ambos FortiGates se realiza **por GUI*
                               ┌─────────────────┐
                               │   Router ISP    │
                               │                 │
-                              │ Gi0/0: .2 /29   │
-                              │ Gi0/1: .10 /29  │
+                              │  e0/0: .2 /29   │
+                              │  e0/1: .10 /29  │
                               └───┬──────────┬──┘
                     203.0.113.0/29│          │203.0.113.8/29
                                   │          │
@@ -103,8 +103,8 @@ Toda la configuración y demostración de ambos FortiGates se realiza **por GUI*
 
 | Interfaz | Rol | Dirección IP | Máscara |
 |---|---|---|---|
-| **Gi0/0** | Hacia FortiGate-A | 203.0.113.2 | /29 |
-| **Gi0/1** | Hacia FortiGate-B | 203.0.113.10 | /29 |
+| **e0/0** | Hacia FortiGate-A | 203.0.113.2 | /29 |
+| **e0/1** | Hacia FortiGate-B | 203.0.113.10 | /29 |
 
 **FortiGate-A (Sitio Usuarios):**
 
@@ -124,8 +124,8 @@ Toda la configuración y demostración de ambos FortiGates se realiza **por GUI*
 
 | Dispositivo | Interfaz | Dirección IP | Máscara | Gateway | Método | Rol |
 |---|---|---|---|---|---|---|
-| **Router ISP** | Gi0/0 | 203.0.113.2 | /29 | — | Estática | Enlace hacia FortiGate-A |
-| **Router ISP** | Gi0/1 | 203.0.113.10 | /29 | — | Estática | Enlace hacia FortiGate-B |
+| **Router ISP** | e0/0 | 203.0.113.2 | /29 | — | Estática | Enlace hacia FortiGate-A |
+| **Router ISP** | e0/1 | 203.0.113.10 | /29 | — | Estática | Enlace hacia FortiGate-B |
 | **FortiGate-A** | port1 | 203.0.113.3 | /29 | 203.0.113.2 | Estática | WAN, extremo local de la VPN |
 | **FortiGate-A** | port2 | 20.25.30.2 | /25 | — | Estática | Gateway VLAN 10 (Usuarios) |
 | **FortiGate-B** | port1 | 203.0.113.11 | /29 | 203.0.113.10 | Estática | WAN, extremo remoto de la VPN |
@@ -147,13 +147,13 @@ configure terminal
 
 hostname ISP
 
-interface GigabitEthernet0/0
+interface Ethernet0/0
  description Enlace hacia FortiGate-A
  ip address 203.0.113.2 255.255.255.248
  no shutdown
 exit
 
-interface GigabitEthernet0/1
+interface Ethernet0/1
  description Enlace hacia FortiGate-B
  ip address 203.0.113.10 255.255.255.248
  no shutdown
