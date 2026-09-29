@@ -217,7 +217,7 @@ show interfaces trunk
 ```
 Debe mostrar VLAN 10 `USUARIOS` con `Et0/1` y el trunk `Et0/0` activo con VLAN 10 permitida.
 
-> Ver evidencia: [16_switch_vlan10.png](screenshots/16_switch_vlan10.png)
+> Ver evidencia: [00_switch_vlan10.png](screenshots/00_switch_vlan10.png)
 
 ---
 
@@ -569,6 +569,7 @@ En `Log & Report → Forward Traffic` de FortiGate-A se ve el tráfico con la po
 
 | # | Archivo | Descripción |
 |---|---|---|
+| 00 | [`00_switch_vlan10.png`](screenshots/00_switch_vlan10.png) | Consola de SW-USUARIOS con `show vlan brief` y `show interfaces trunk`. |
 | 01 | [`01_cli_acceso_fga.png`](screenshots/01_cli_acceso_fga.png) | Terminal CLI de FortiGate-A mostrando la config inicial de `port1` (203.0.113.2/29) y el login de la GUI. |
 | 02 | [`02_interfaces_fga.png`](screenshots/02_interfaces_fga.png) | `Network → Interfaces` de FortiGate-A: port1 WAN, port2 físico y VLAN10. |
 | 03 | [`03_dhcp_fga.png`](screenshots/03_dhcp_fga.png) | Servidor DHCP en la interfaz VLAN10 de FortiGate-A, rango `20.25.30.3–126`. |
@@ -582,11 +583,10 @@ En `Log & Report → Forward Traffic` de FortiGate-A se ve el tráfico con la po
 | 13 | [`13_traceroute_tunel_activo.png`](screenshots/13_traceroute_tunel_activo.png) | Traceroute exitoso desde el Usuario al Web Server con el túnel activo. |
 | 14 | [`14_traceroute_tunel_caido.png`](screenshots/14_traceroute_tunel_caido.png) | Traceroute fallido desde el Usuario al Web Server con el túnel caído — confirma que no hay ruta alterna. |
 | 15 | [`15_ipsec_monitor.png`](screenshots/15_ipsec_monitor.png) | `Monitor → IPsec Monitor` mostrando el túnel `Up` y luego `Down` durante la prueba. |
-| 16 | [`16_switch_vlan10.png`](screenshots/16_switch_vlan10.png) | Consola de SW-USUARIOS con `show vlan brief` y `show interfaces trunk`. |
-| 17 | [`17_interfaz_vlan10_fga.png`](screenshots/17_interfaz_vlan10_fga.png) | Interfaz VLAN10 (ID 10 sobre port2) en FortiGate-A con IP `20.25.30.2/25`. |
-| 18 | [`18_politica_nat_fga.png`](screenshots/18_politica_nat_fga.png) | Política `Usuarios-to-WAN` con NAT habilitado en FortiGate-A. |
-| 19 | [`19_politica_nat_fgb.png`](screenshots/19_politica_nat_fgb.png) | Política `Servidor-to-WAN` con NAT habilitado en FortiGate-B. |
-| 20 | [`20_prueba_nat.png`](screenshots/20_prueba_nat.png) | Ping desde el Usuario a la PC y log de Forward Traffic mostrando la IP traducida. |
+| 16 | [`16_interfaz_vlan10_fga.png`](screenshots/16_interfaz_vlan10_fga.png) | Interfaz VLAN10 (ID 10 sobre port2) en FortiGate-A con IP `20.25.30.2/25`. |
+| 18 | [`17_politica_nat_fga.png`](screenshots/17_politica_nat_fga.png) | Política `Usuarios-to-WAN` con NAT habilitado en FortiGate-A. |
+| 19 | [`18_politica_nat_fgb.png`](screenshots/18_politica_nat_fgb.png) | Política `Servidor-to-WAN` con NAT habilitado en FortiGate-B. |
+| 20 | [`19_prueba_nat.png`](screenshots/19_prueba_nat.png) | Ping desde el Usuario a la PC y log de Forward Traffic mostrando la IP traducida. |
 
 ---
 
