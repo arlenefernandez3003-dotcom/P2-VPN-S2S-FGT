@@ -424,21 +424,31 @@ Paso 3 del asistente (**Policy & Routing**):
 
 > Ver evidencia: [07_ipsec_fase1_fga.png](screenshots/07_ipsec_fase1_fga.png), [08_ipsec_fase2_fga.png](screenshots/08_ipsec_fase2_fga.png)
 
-### 6.3 Fase 1 — FortiGate-B
+### 6.3 Fase 1 — FortiGate-B (FortiOS 7.6.2)
 
-Configuración espejo, apuntando de vuelta hacia FortiGate-A:
+**Ruta:** `VPN → IPsec Wizard → Create New`
+
+En 7.6.2 el asistente es una sola pantalla con tres bloques (**Remote Site**, **VPN Tunnel**, **Local FortiGate**), no pasos numerados. Nombre del asistente: `VPN-B-to-A`.
+
+**Bloque VPN Tunnel:**
 
 | Campo | Valor |
 |---|---|
-| Name | `VPN-B-to-A` |
-| Template type | `Site to Site` |
-| NAT configuration | `No NAT between sites` |
-| Remote Device Type | `FortiGate` |
+| Authentication method | `Pre-shared key` |
+| Pre-shared key | *(la misma clave configurada en FortiGate-A)* |
+| IKE | `Version 2` |
+| Transport | `Auto` |
+| Use Fortinet encapsulation | Desactivado |
+| NAT traversal | `Disable` |
+
+> **NAT traversal → `Disable`:** equivale al `No NAT between sites` de FortiGate-A. Ambos equipos están en el mismo segmento `203.0.113.0/29` y se ven con su IP real. No confundir con la política de NAT de la sección 5.2.
+
+**Bloque Remote Site:**
+
+| Campo | Valor |
+|---|---|
 | Remote IP Address | `203.0.113.2` |
 | Outgoing Interface | `port1` |
-| Authentication Method | `Pre-shared Key` |
-| Pre-shared Key | *(la misma clave configurada en FortiGate-A)* |
-| IKE Version | `2` |
 
 ### 6.4 Fase 2 — FortiGate-B
 
