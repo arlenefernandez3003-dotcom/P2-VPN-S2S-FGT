@@ -283,7 +283,7 @@ Acceder luego desde el navegador de la PC a `https://203.0.113.2` con las creden
 
 > Esta interfaz debe existir **antes** de correr el asistente IPsec, porque es la `Local interface` de la sección 6.2.
 
-> Ver evidencia: [17_interfaz_vlan10_fga.png](screenshots/17_interfaz_vlan10_fga.png)
+> Ver evidencia: [03_interfaz_vlan10_fga.png](screenshots/03_interfaz_vlan10_fga.png)
 
 ### 4.3 DHCP en VLAN 10 (Usuarios)
 
@@ -572,21 +572,21 @@ En `Log & Report → Forward Traffic` de FortiGate-A se ve el tráfico con la po
 | 00 | [`00_switch_vlan10.png`](screenshots/00_switch_vlan10.png) | Consola de SW-USUARIOS con `show vlan brief` y `show interfaces trunk`. |
 | 01 | [`01_cli_acceso_fga.png`](screenshots/01_cli_acceso_fga.png) | Terminal CLI de FortiGate-A mostrando la config inicial de `port1` (203.0.113.2/29) y el login de la GUI. |
 | 02 | [`02_interfaces_fga.png`](screenshots/02_interfaces_fga.png) | `Network → Interfaces` de FortiGate-A: port1 WAN, port2 físico y VLAN10. |
-| 03 | [`03_dhcp_fga.png`](screenshots/03_dhcp_fga.png) | Servidor DHCP en la interfaz VLAN10 de FortiGate-A, rango `20.25.30.3–126`. |
+| 03 | [`03_interfaz_vlan10_fga.png`](screenshots/03_interfaz_vlan10_fga.png) | Interfaz VLAN10 (ID 10 sobre port2) en FortiGate-A con IP `20.25.30.2/25`. |
+| 04 | [`04_dhcp_fga.png`](screenshots/04_dhcp_fga.png) | Servidor DHCP en la interfaz VLAN10 de FortiGate-A, rango `20.25.30.3–126`. |
 | 05 | [`05_interfaces_fgb.png`](screenshots/05_interfaces_fgb.png) | `Network → Interfaces` de FortiGate-B: port1 WAN y port2 LAN-SERVIDOR configuradas. |
-| 07 | [`07_ipsec_fase1_fga.png`](screenshots/07_ipsec_fase1_fga.png) | Fase 1 de la VPN en FortiGate-A, remote gateway `203.0.113.3`. |
-| 08 | [`08_ipsec_fase2_fga.png`](screenshots/08_ipsec_fase2_fga.png) | Fase 2 de la VPN en FortiGate-A, subredes local/remota. |
-| 09 | [`09_ipsec_fase1_fgb.png`](screenshots/09_ipsec_fase1_fgb.png) | Fase 1 de la VPN en FortiGate-B, remote gateway `203.0.113.2`. |
-| 10 | [`10_ipsec_fase2_fgb.png`](screenshots/10_ipsec_fase2_fgb.png) | Fase 2 de la VPN en FortiGate-B, subredes local/remota. |
-| 11 | [`11_politicas_vpn_fga.png`](screenshots/11_politicas_vpn_fga.png) | Políticas de firewall en FortiGate-A para el tráfico hacia/desde la VPN. |
-| 12 | [`12_politicas_vpn_fgb.png`](screenshots/12_politicas_vpn_fgb.png) | Políticas de firewall en FortiGate-B para el tráfico hacia/desde la VPN. |
-| 13 | [`13_traceroute_tunel_activo.png`](screenshots/13_traceroute_tunel_activo.png) | Traceroute exitoso desde el Usuario al Web Server con el túnel activo. |
-| 14 | [`14_traceroute_tunel_caido.png`](screenshots/14_traceroute_tunel_caido.png) | Traceroute fallido desde el Usuario al Web Server con el túnel caído — confirma que no hay ruta alterna. |
-| 15 | [`15_ipsec_monitor.png`](screenshots/15_ipsec_monitor.png) | `Monitor → IPsec Monitor` mostrando el túnel `Up` y luego `Down` durante la prueba. |
-| 16 | [`16_interfaz_vlan10_fga.png`](screenshots/16_interfaz_vlan10_fga.png) | Interfaz VLAN10 (ID 10 sobre port2) en FortiGate-A con IP `20.25.30.2/25`. |
-| 18 | [`17_politica_nat_fga.png`](screenshots/17_politica_nat_fga.png) | Política `Usuarios-to-WAN` con NAT habilitado en FortiGate-A. |
-| 19 | [`18_politica_nat_fgb.png`](screenshots/18_politica_nat_fgb.png) | Política `Servidor-to-WAN` con NAT habilitado en FortiGate-B. |
-| 20 | [`19_prueba_nat.png`](screenshots/19_prueba_nat.png) | Ping desde el Usuario a la PC y log de Forward Traffic mostrando la IP traducida. |
+| 06 | [`06_ipsec_fase1_fga.png`](screenshots/06_ipsec_fase1_fga.png) | Fase 1 de la VPN en FortiGate-A, remote gateway `203.0.113.3`. |
+| 07 | [`07_ipsec_fase2_fga.png`](screenshots/07_ipsec_fase2_fga.png) | Fase 2 de la VPN en FortiGate-A, subredes local/remota. |
+| 08 | [`08_ipsec_fase1_fgb.png`](screenshots/08_ipsec_fase1_fgb.png) | Fase 1 de la VPN en FortiGate-B, remote gateway `203.0.113.2`. |
+| 09 | [`09_ipsec_fase2_fgb.png`](screenshots/09_ipsec_fase2_fgb.png) | Fase 2 de la VPN en FortiGate-B, subredes local/remota. |
+| 10 | [`10_politicas_vpn_fga.png`](screenshots/10_politicas_vpn_fga.png) | Políticas de firewall en FortiGate-A para el tráfico hacia/desde la VPN. |
+| 11 | [`11_politicas_vpn_fgb.png`](screenshots/11_politicas_vpn_fgb.png) | Políticas de firewall en FortiGate-B para el tráfico hacia/desde la VPN. |
+| 12 | [`12_traceroute_tunel_activo.png`](screenshots/12_traceroute_tunel_activo.png) | Traceroute exitoso desde el Usuario al Web Server con el túnel activo. |
+| 13 | [`13_traceroute_tunel_caido.png`](screenshots/13_traceroute_tunel_caido.png) | Traceroute fallido desde el Usuario al Web Server con el túnel caído — confirma que no hay ruta alterna. |
+| 14 | [`14_ipsec_monitor.png`](screenshots/14_ipsec_monitor.png) | `Monitor → IPsec Monitor` mostrando el túnel `Up` y luego `Down` durante la prueba. |
+| 15 | [`15_politica_nat_fga.png`](screenshots/15_politica_nat_fga.png) | Política `Usuarios-to-WAN` con NAT habilitado en FortiGate-A. |
+| 16 | [`16_politica_nat_fgb.png`](screenshots/16_politica_nat_fgb.png) | Política `Servidor-to-WAN` con NAT habilitado en FortiGate-B. |
+| 17 | [`17_prueba_nat.png`](screenshots/17_prueba_nat.png) | Ping desde el Usuario a la PC y log de Forward Traffic mostrando la IP traducida. |
 
 ---
 
