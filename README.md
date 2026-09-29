@@ -447,8 +447,14 @@ En 7.6.2 el asistente es una sola pantalla con tres bloques (**Remote Site**, **
 
 | Campo | Valor |
 |---|---|
-| Remote IP Address | `203.0.113.2` |
-| Outgoing Interface | `port1` |
+| Remote site device type | `FortiGate` (ícono de Fortinet) |
+| Remote site device | `Accessible and static` |
+| IP/FQDN | `203.0.113.2` |
+| Route this device's internet traffic through the remote site | Desactivado |
+| Remote site subnets that can access VPN | `20.25.30.0/25` (red de Usuarios) |
+
+> **Route this device's internet traffic...:** equivale a `Internet Access = None` de FortiGate-A. El lab no usa Internet, y por el túnel solo debe viajar el tráfico entre las dos LAN.
+> **Outgoing Interface:** en 7.6.2 no está en este bloque; se elige en el bloque **Local FortiGate**.
 
 ### 6.4 Fase 2 — FortiGate-B
 
