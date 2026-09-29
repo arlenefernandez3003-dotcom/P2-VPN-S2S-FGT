@@ -277,10 +277,16 @@ Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) 
 
 ### 6.2 Fase 2 — FortiGate-A
 
+Paso 3 del asistente (**Policy & Routing**):
+
 | Campo | Valor |
 |---|---|
-| Local Address | `20.25.30.0/25` (red de Usuarios) |
-| Remote Address | `20.25.30.128/28` (red del Servidor) |
+| Local interface | `port2` (LAN-USUARIOS) |
+| Local subnets | `20.25.30.0/25` (red de Usuarios) |
+| Remote Subnets | `20.25.30.128/28` (red del Servidor) |
+| Internet Access | `None` |
+
+> **Internet Access → `None`:** el laboratorio no usa Internet. `Share Local` y `Use Remote` agregarían políticas y rutas para sacar tráfico a Internet a través del túnel, y aquí solo debe viajar por él el tráfico entre las dos LAN.
 
 > El wizard crea automáticamente la interfaz virtual `VPN-A-to-B` (tipo tunnel) y una ruta estática hacia `20.25.30.128/28` a través de ella — verificar en `Network → Static Routes` que quedó creada.
 
@@ -304,10 +310,14 @@ Configuración espejo, apuntando de vuelta hacia FortiGate-A:
 
 ### 6.4 Fase 2 — FortiGate-B
 
+Paso 3 del asistente (**Policy & Routing**):
+
 | Campo | Valor |
 |---|---|
-| Local Address | `20.25.30.128/28` (red del Servidor) |
-| Remote Address | `20.25.30.0/25` (red de Usuarios) |
+| Local interface | `port2` (LAN-SERVIDOR) |
+| Local subnets | `20.25.30.128/28` (red del Servidor) |
+| Remote Subnets | `20.25.30.0/25` (red de Usuarios) |
+| Internet Access | `None` |
 
 > Ver evidencia: [09_ipsec_fase1_fgb.png](screenshots/09_ipsec_fase1_fgb.png), [10_ipsec_fase2_fgb.png](screenshots/10_ipsec_fase2_fgb.png)
 
