@@ -646,8 +646,6 @@ Numeradas en el orden en que se toman durante el procedimiento.
 │   ├── sw-usuarios-running-config.txt
 │   ├── fortigate-a-running-config.conf
 │   └── fortigate-b-running-config.conf
-└── entregable/
-    └── ArleneFernandez_20250730_P3.txt
 ```
 
 > Ajustar el número de práctica (`P3`) según lo indicado por el profesor. El video debe subirse al principio del repositorio (enlace colocado arriba en este README).
