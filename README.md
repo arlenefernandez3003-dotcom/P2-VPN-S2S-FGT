@@ -372,7 +372,7 @@ Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) 
 | Remote IP Address | `203.0.113.3` |
 | Outgoing Interface | `port1` |
 | Authentication Method | `Pre-shared Key` |
-| Pre-shared Key | *(clave fuerte, la misma en ambos extremos)* |
+| Pre-shared Key | *Arlene123.* |
 | IKE Version | `2` |
 
 > **NAT configuration → `No NAT between sites`:** ninguno de los dos FortiGates está detrás de un dispositivo que haga NAT. Ambos están en el mismo segmento `203.0.113.0/29` y se ven con su IP real, así que no hace falta NAT-Traversal. No confundir con la política de NAT del Paso 11, que es solo para el tráfico hacia la WAN.
@@ -409,7 +409,7 @@ En 7.6.2 el asistente es una sola pantalla con tres bloques (**VPN Tunnel**, **R
 | Campo | Valor |
 |---|---|
 | Authentication method | `Pre-shared key` |
-| Pre-shared key | *(la misma clave configurada en FortiGate-A)* |
+| Pre-shared key | *Arlene123.* |
 | IKE | `Version 2` |
 | Transport | `Auto` |
 | Use Fortinet encapsulation | Desactivado |
