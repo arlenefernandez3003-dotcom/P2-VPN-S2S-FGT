@@ -12,6 +12,10 @@
 
 ---
 
+> ⚠️ **Aclaración importante:** FortiGate-A y FortiGate-B **no tienen la misma versión de FortiOS** (FortiGate-A: `v7.0.3` · FortiGate-B: `v7.6.2` *← completar*). Por eso, al configurar uno y otro pueden aparecer **pequeñas variaciones en la GUI** (nombres de menús o campos, orden de las opciones, pasos del asistente). Los valores de configuración son los mismos en ambos equipos.
+
+---
+
 ## 📋 Tabla de Contenido
 
 1. [Objetivo del Laboratorio](#1-objetivo-del-laboratorio)
@@ -139,9 +143,9 @@ Los dos FortiGates y la PC local se conectan al mismo nodo **Cloud** de PNETLab,
 **En el laboratorio (PNETLab):**
 
 1. Clic derecho en el área de trabajo → `Add an object → Network`.
-2. Type: `Cloud(NumeroAdaptador)`, nombre `ISP`.
-3. Conectar `port1` de FortiGate-A a `ISP`.
-4. Conectar `port1` de FortiGate-B a `ISP`.
+2. Type: `Management(Cloud0)`, nombre `Nube-PNET`.
+3. Conectar `port1` de FortiGate-A a `Nube-PNET`.
+4. Conectar `port1` de FortiGate-B a `Nube-PNET`.
 5. Conectar `port2` de cada FortiGate a su LAN (Usuario / Web Server).
 
 ---
@@ -260,13 +264,16 @@ Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) 
 | Campo | Valor |
 |---|---|
 | Name | `VPN-A-to-B` |
-| Template | `Site to Site` |
+| Template type | `Site to Site` |
+| NAT configuration | `No NAT between sites` |
 | Remote Device Type | `FortiGate` |
 | Remote IP Address | `203.0.113.3` |
 | Outgoing Interface | `port1` |
 | Authentication Method | `Pre-shared Key` |
 | Pre-shared Key | *(clave fuerte, la misma en ambos extremos)* |
 | IKE Version | `2` |
+
+> **NAT configuration → `No NAT between sites`:** ninguno de los dos FortiGates está detrás de un dispositivo que haga NAT. Ambos están en el mismo segmento `203.0.113.0/29` de la Nube PNET y se ven con su IP real, así que no hace falta NAT-Traversal. Se usa la misma opción en FortiGate-B (sección 6.3).
 
 ### 6.2 Fase 2 — FortiGate-A
 
@@ -286,7 +293,8 @@ Configuración espejo, apuntando de vuelta hacia FortiGate-A:
 | Campo | Valor |
 |---|---|
 | Name | `VPN-B-to-A` |
-| Template | `Site to Site` |
+| Template type | `Site to Site` |
+| NAT configuration | `No NAT between sites` |
 | Remote Device Type | `FortiGate` |
 | Remote IP Address | `203.0.113.2` |
 | Outgoing Interface | `port1` |
