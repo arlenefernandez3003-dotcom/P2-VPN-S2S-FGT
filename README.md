@@ -12,7 +12,7 @@
 
 ---
 
-> ⚠️ **Aclaración importante:** FortiGate-A y FortiGate-B **no tienen la misma versión de FortiOS** (FortiGate-A: `v7.0.3` · FortiGate-B: `v7.6.2` *← completar*). Por eso, al configurar uno y otro pueden aparecer **pequeñas variaciones en la GUI** (nombres de menús o campos, orden de las opciones, pasos del asistente). Los valores de configuración son los mismos en ambos equipos.
+> ⚠️ **Aclaración importante:** FortiGate-A y FortiGate-B **no tienen la misma versión de FortiOS** (FortiGate-A: `v7.0.3` · FortiGate-B: `v7.6.2`). Por eso el asistente de VPN se ve distinto en cada equipo: en FortiGate-A son pasos numerados y en FortiGate-B es una sola pantalla con tres bloques. Los valores de configuración son los mismos (en espejo) en ambos equipos.
 
 ---
 
@@ -20,33 +20,22 @@
 
 1. [Objetivo del Laboratorio](#1-objetivo-del-laboratorio)
 2. [Topología y Direccionamiento](#2-topología-y-direccionamiento)
-   - [Diagrama de Topología](#21-diagrama-de-topología)
-   - [Tabla de Interfaces](#22-tabla-de-interfaces)
-   - [Tabla de Dispositivos](#23-tabla-de-dispositivos)
-3. [Nube PNET y Switch de Usuarios](#3-nube-pnet-y-switch-de-usuarios)
-   - [3.1 Configuración de la Nube PNET](#31-configuración-de-la-nube-pnet)
-   - [3.2 Switch de Usuarios (VLAN 10)](#32-switch-de-usuarios-vlan-10)
-4. [Configuraciones del FortiGate-A (Sitio Usuarios) por la GUI](#4-configuraciones-del-fortigate-a-sitio-usuarios-por-la-gui)
-   - [4.0 Acceso Inicial — CLI](#40-acceso-inicial--cli)
-   - [4.1 Configuración de Interfaces](#41-configuración-de-interfaces)
-   - [4.2 Interfaz VLAN 10](#42-interfaz-vlan-10)
-   - [4.3 DHCP en VLAN 10 (Usuarios)](#43-dhcp-en-vlan-10-usuarios)
-   - [4.4 Política de NAT hacia la WAN](#44-política-de-nat-hacia-la-wan)
-5. [Configuraciones del FortiGate-B (Sitio Servidor) por la GUI](#5-configuraciones-del-fortigate-b-sitio-servidor-por-la-gui)
-   - [5.0 Acceso Inicial — CLI](#50-acceso-inicial--cli)
-   - [5.1 Configuración de Interfaces](#51-configuración-de-interfaces)
-   - [5.2 Política de NAT hacia la WAN](#52-política-de-nat-hacia-la-wan)
-6. [VPN Site-to-Site (IPsec)](#6-vpn-site-to-site-ipsec)
-   - [6.1 Fase 1 — FortiGate-A](#61-fase-1--fortigate-a)
-   - [6.2 Fase 2 — FortiGate-A](#62-fase-2--fortigate-a)
-   - [6.3 Fase 1 — FortiGate-B](#63-fase-1--fortigate-b)
-   - [6.4 Fase 2 — FortiGate-B](#64-fase-2--fortigate-b)
-   - [6.5 Rutas estáticas hacia el túnel](#65-rutas-estáticas-hacia-el-túnel)
-   - [6.6 Políticas de Firewall para el tráfico VPN](#66-políticas-de-firewall-para-el-tráfico-vpn)
-7. [Web Server (HTTPS)](#7-web-server-https)
-8. [Pruebas de Verificación](#8-pruebas-de-verificación)
-9. [Capturas de Pantalla](#9-capturas-de-pantalla)
-10. [Estructura del Repositorio](#10-estructura-del-repositorio)
+3. [Procedimiento paso a paso](#3-procedimiento-paso-a-paso)
+   - [Paso 1. Nube PNET y PC local](#paso-1-nube-pnet-y-pc-local)
+   - [Paso 2. Switch de Usuarios (VLAN 10)](#paso-2-switch-de-usuarios-vlan-10)
+   - [Paso 3. Acceso inicial de FortiGate-A (CLI)](#paso-3-acceso-inicial-de-fortigate-a-cli)
+   - [Paso 4. Acceso inicial de FortiGate-B (CLI)](#paso-4-acceso-inicial-de-fortigate-b-cli)
+   - [Paso 5. Interfaces y DHCP de FortiGate-A](#paso-5-interfaces-y-dhcp-de-fortigate-a)
+   - [Paso 6. Interfaces de FortiGate-B](#paso-6-interfaces-de-fortigate-b)
+   - [Paso 7. VPN IPsec en FortiGate-A](#paso-7-vpn-ipsec-en-fortigate-a)
+   - [Paso 8. VPN IPsec en FortiGate-B](#paso-8-vpn-ipsec-en-fortigate-b)
+   - [Paso 9. Verificar rutas estáticas hacia el túnel](#paso-9-verificar-rutas-estáticas-hacia-el-túnel)
+   - [Paso 10. Verificar políticas de firewall de la VPN](#paso-10-verificar-políticas-de-firewall-de-la-vpn)
+   - [Paso 11. Políticas de NAT hacia la WAN](#paso-11-políticas-de-nat-hacia-la-wan)
+   - [Paso 12. Web Server (HTTPS)](#paso-12-web-server-https)
+   - [Paso 13. Pruebas de verificación](#paso-13-pruebas-de-verificación)
+4. [Capturas de Pantalla](#4-capturas-de-pantalla)
+5. [Estructura del Repositorio](#5-estructura-del-repositorio)
 
 ---
 
@@ -153,9 +142,13 @@ Toda la configuración y demostración de ambos FortiGates se realiza **por GUI*
 
 ---
 
-## 3. Nube PNET y Switch de Usuarios
+## 3. Procedimiento paso a paso
 
-### 3.1 Configuración de la Nube PNET
+Los pasos están en el orden en que se ejecutan. Cada uno depende de los anteriores.
+
+---
+
+### Paso 1. Nube PNET y PC local
 
 Los dos FortiGates y la PC local se conectan al mismo nodo **Cloud** de PNETLab, que funciona como un switch: todos quedan en la red `203.0.113.0/29`.
 
@@ -173,12 +166,14 @@ Los dos FortiGates y la PC local se conectan al mismo nodo **Cloud** de PNETLab,
 2. Type: `Management(Cloud0)`, nombre `Nube-PNET`.
 3. Conectar `port1` de FortiGate-A a `Nube-PNET`.
 4. Conectar `port1` de FortiGate-B a `Nube-PNET`.
-5. Conectar `port2` de FortiGate-A a `e0/0` de `SW-USUARIOS` (sección 3.2); `e0/1` del switch va al Usuario.
+5. Conectar `port2` de FortiGate-A a `e0/0` de `SW-USUARIOS` (Paso 2); `e0/1` del switch va al Usuario.
 6. Conectar `port2` de FortiGate-B al Web Server.
 
-### 3.2 Switch de Usuarios (VLAN 10)
+---
 
-Se agrega un switch L2 (`Cisco IOL L2` en PNETLab) entre FortiGate-A y el Usuario para que la VLAN 10 sea real: el puerto hacia el FortiGate es un **trunk 802.1Q** y el puerto del Usuario es un **access en VLAN 10**. Configuración en consola del switch (script: [`scripts/sw-usuarios.txt`](scripts/sw-usuarios.txt)):
+### Paso 2. Switch de Usuarios (VLAN 10)
+
+Se agrega un switch L2 (`Cisco IOL L2` en PNETLab) entre FortiGate-A y el Usuario para que la VLAN 10 sea real: el puerto hacia el FortiGate es un **trunk 802.1Q** y el puerto del Usuario es un **access en VLAN 10**. Configuración en la consola del switch (script: [`scripts/sw-usuarios.txt`](scripts/sw-usuarios.txt)):
 
 ```bash
 enable
@@ -217,13 +212,13 @@ show interfaces trunk
 ```
 Debe mostrar VLAN 10 `USUARIOS` con `Et0/1` y el trunk `Et0/0` activo con VLAN 10 permitida.
 
-> Ver evidencia: [00_switch_vlan10.png](screenshots/00_switch_vlan10.png)
+> Ver evidencia: [01_switch_vlan10.png](screenshots/01_switch_vlan10.png)
 
 ---
 
-## 4. Configuraciones del FortiGate-A (Sitio Usuarios) por la GUI
+### Paso 3. Acceso inicial de FortiGate-A (CLI)
 
-### 4.0 Acceso Inicial — CLI
+Desde la consola de FortiGate-A (script: [`scripts/fortigate-a-cli.txt`](scripts/fortigate-a-cli.txt)):
 
 ```bash
 config system interface
@@ -236,18 +231,46 @@ config system interface
 end
 ```
 
-Acceder luego desde el navegador de la PC a `https://203.0.113.2` con las credenciales por defecto (`admin` / contraseña vacía) y definir una contraseña segura. (Script: [`scripts/fortigate-a-cli.txt`](scripts/fortigate-a-cli.txt))
+Acceder luego desde el navegador de la PC a `https://203.0.113.2` con las credenciales por defecto (`admin` / contraseña vacía) y definir una contraseña segura.
 
-> Ver evidencia: [01_cli_acceso_fga.png](screenshots/01_cli_acceso_fga.png)
+> Ver evidencia: [02_cli_acceso_fga.png](screenshots/02_cli_acceso_fga.png)
 
-### 4.1 Configuración de Interfaces
+---
+
+### Paso 4. Acceso inicial de FortiGate-B (CLI)
+
+Desde la consola de FortiGate-B (script: [`scripts/fortigate-b-cli.txt`](scripts/fortigate-b-cli.txt)):
+
+```bash
+config system interface
+    edit "port1"
+        set mode static
+        set ip 203.0.113.3 255.255.255.248
+        set allowaccess https ssh ping
+        set role wan
+    next
+end
+```
+
+Acceder desde el navegador de la PC a `https://203.0.113.3` y definir una contraseña segura.
+
+> Ver evidencia: [03_cli_acceso_fgb.png](screenshots/03_cli_acceso_fgb.png)
+
+---
+
+### Paso 5. Interfaces y DHCP de FortiGate-A
+
+Todo por GUI en `https://203.0.113.2`.
+
+#### 5.1 Interfaces físicas
 
 **Ruta:** `Network → Interfaces`
 
-**port1 — WAN-NUBE:**
+**port1 — WAN-NUBE** (ya quedó con IP en el Paso 3; se completa el resto):
 
 | Campo | Valor |
 |---|---|
+| Alias | `WAN-NUBE` |
 | Role | `WAN` |
 | Addressing mode | `Manual` |
 | IP/Netmask | `203.0.113.2 / 255.255.255.248` |
@@ -263,9 +286,9 @@ Acceder luego desde el navegador de la PC a `https://203.0.113.2` con las creden
 
 > `port2` solo transporta las tramas etiquetadas de la VLAN 10 hacia el switch; la IP del gateway va en la interfaz VLAN (siguiente sección).
 
-> Ver evidencia: [02_interfaces_fga.png](screenshots/02_interfaces_fga.png)
+> Ver evidencia: [04_interfaces_fga.png](screenshots/04_interfaces_fga.png)
 
-### 4.2 Interfaz VLAN 10
+#### 5.2 Interfaz VLAN 10
 
 **Ruta:** `Network → Interfaces → Create New → Interface`
 
@@ -281,11 +304,11 @@ Acceder luego desde el navegador de la PC a `https://203.0.113.2` con las creden
 | IP/Netmask | `20.25.30.2 / 255.255.255.128` |
 | Administrative access | `Ping` |
 
-> Esta interfaz debe existir **antes** de correr el asistente IPsec, porque es la `Local interface` de la sección 6.2.
+> Esta interfaz debe existir **antes** del asistente IPsec del Paso 7, porque es la `Local interface` de la VPN.
 
-> Ver evidencia: [03_interfaz_vlan10_fga.png](screenshots/03_interfaz_vlan10_fga.png)
+> Ver evidencia: [05_interfaz_vlan10_fga.png](screenshots/05_interfaz_vlan10_fga.png)
 
-### 4.3 DHCP en VLAN 10 (Usuarios)
+#### 5.3 DHCP en VLAN 10 (Usuarios)
 
 **Ruta:** `Network → Interfaces → VLAN10 → Edit → DHCP Server`
 
@@ -298,55 +321,21 @@ Acceder luego desde el navegador de la PC a `https://203.0.113.2` con las creden
 | DNS Server | `8.8.8.8` / `8.8.4.4` |
 | Lease Time | `1 day` |
 
-> Ver evidencia: [03_dhcp_fga.png](screenshots/03_dhcp_fga.png)
-
-### 4.4 Política de NAT hacia la WAN
-
-Crear **después** de la VPN (secciones 6.x), para que quede debajo de las políticas del túnel en la lista.
-
-**Ruta:** `Policy & Objects → Firewall Policy → Create New`
-
-| Campo | Valor |
-|---|---|
-| Name | `Usuarios-to-WAN` |
-| Incoming Interface | `VLAN10 (LAN-USUARIOS)` |
-| Outgoing Interface | `port1 (WAN-NUBE)` |
-| Source | `all` |
-| Destination | `all` |
-| Schedule | `always` |
-| Service | `ALL` |
-| Action | `ACCEPT` |
-| NAT | ✅ Enabled — `Use Outgoing Interface Address` |
-
-> No se configura ruta por defecto: `203.0.113.0/29` es una red directamente conectada, por lo que el tráfico hacia la nube (PC local, otro FortiGate) sale por `port1` con la IP `203.0.113.2`. El tráfico hacia `20.25.30.128/28` solo tiene ruta a través del túnel.
-
-> Ver evidencia: [18_politica_nat_fga.png](screenshots/18_politica_nat_fga.png)
+> Ver evidencia: [06_dhcp_fga.png](screenshots/06_dhcp_fga.png)
 
 ---
 
-## 5. Configuraciones del FortiGate-B (Sitio Servidor) por la GUI
+### Paso 6. Interfaces de FortiGate-B
 
-### 5.0 Acceso Inicial — CLI
+Todo por GUI en `https://203.0.113.3`.
 
-```bash
-config system interface
-    edit "port1"
-        set mode static
-        set ip 203.0.113.3 255.255.255.248
-        set allowaccess https ssh ping
-        set role wan
-    next
-end
-```
-
-Acceder desde el navegador de la PC a `https://203.0.113.3`. (Script: [`scripts/fortigate-b-cli.txt`](scripts/fortigate-b-cli.txt))
-
-### 5.1 Configuración de Interfaces
+**Ruta:** `Network → Interfaces`
 
 **port1 — WAN-NUBE:**
 
 | Campo | Valor |
 |---|---|
+| Alias | `WAN-NUBE` |
 | Role | `WAN` |
 | Addressing mode | `Manual` |
 | IP/Netmask | `203.0.113.3 / 255.255.255.248` |
@@ -356,42 +345,23 @@ Acceder desde el navegador de la PC a `https://203.0.113.3`. (Script: [`scripts/
 
 | Campo | Valor |
 |---|---|
+| Alias | `LAN-SERVIDOR` |
 | Role | `LAN` |
 | Addressing mode | `Manual` |
 | IP/Netmask | `20.25.30.130 / 255.255.255.240` |
 | Administrative access | `Ping` |
 
-> Ver evidencia: [05_interfaces_fgb.png](screenshots/05_interfaces_fgb.png)
-
-### 5.2 Política de NAT hacia la WAN
-
-Crear **después** de la VPN, debajo de las políticas del túnel.
-
-**Ruta:** `Policy & Objects → Firewall Policy → Create New`
-
-| Campo | Valor |
-|---|---|
-| Name | `Servidor-to-WAN` |
-| Incoming Interface | `port2 (LAN-SERVIDOR)` |
-| Outgoing Interface | `port1 (WAN-NUBE)` |
-| Source | `all` |
-| Destination | `all` |
-| Schedule | `always` |
-| Service | `ALL` |
-| Action | `ACCEPT` |
-| NAT | ✅ Enabled — `Use Outgoing Interface Address` |
-
-> Ver evidencia: [19_politica_nat_fgb.png](screenshots/19_politica_nat_fgb.png)
+> Ver evidencia: [07_interfaces_fgb.png](screenshots/07_interfaces_fgb.png)
 
 ---
 
-## 6. VPN Site-to-Site (IPsec)
+### Paso 7. VPN IPsec en FortiGate-A
 
-Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) y `203.0.113.3` (FortiGate-B), usando el asistente de FortiGate (`VPN → IPsec Wizard`) en modo **Site to Site**, que crea automáticamente la interfaz de túnel, Fase 1, Fase 2 y las rutas asociadas.
+Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) y `203.0.113.3` (FortiGate-B) con el asistente de FortiGate en modo **Site to Site**, que crea automáticamente la interfaz de túnel, Fase 1, Fase 2, la ruta estática y las políticas asociadas.
 
-### 6.1 Fase 1 — FortiGate-A
+#### 7.1 Fase 1
 
-**Ruta:** `VPN → IPsec Wizard → Create New`
+**Ruta (FortiOS 7.0.3):** `VPN → IPsec Wizard → Create New`
 
 | Campo | Valor |
 |---|---|
@@ -405,9 +375,11 @@ Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) 
 | Pre-shared Key | *(clave fuerte, la misma en ambos extremos)* |
 | IKE Version | `2` |
 
-> **NAT configuration → `No NAT between sites`:** ninguno de los dos FortiGates está detrás de un dispositivo que haga NAT. Ambos están en el mismo segmento `203.0.113.0/29` de la Nube PNET y se ven con su IP real, así que no hace falta NAT-Traversal. Se usa la misma opción en FortiGate-B (sección 6.3). No confundir con la política de NAT de las secciones 4.4 y 5.2, que es solo para el tráfico hacia la WAN.
+> **NAT configuration → `No NAT between sites`:** ninguno de los dos FortiGates está detrás de un dispositivo que haga NAT. Ambos están en el mismo segmento `203.0.113.0/29` y se ven con su IP real, así que no hace falta NAT-Traversal. No confundir con la política de NAT del Paso 11, que es solo para el tráfico hacia la WAN.
 
-### 6.2 Fase 2 — FortiGate-A
+> Ver evidencia: [08_ipsec_fase1_fga.png](screenshots/08_ipsec_fase1_fga.png)
+
+#### 7.2 Fase 2
 
 Paso 3 del asistente (**Policy & Routing**):
 
@@ -420,15 +392,17 @@ Paso 3 del asistente (**Policy & Routing**):
 
 > **Internet Access → `None`:** el laboratorio no usa Internet. `Share Local` y `Use Remote` agregarían políticas y rutas para sacar tráfico a Internet a través del túnel, y aquí solo debe viajar por él el tráfico entre las dos LAN.
 
-> El wizard crea automáticamente la interfaz virtual `VPN-A-to-B` (tipo tunnel) y una ruta estática hacia `20.25.30.128/28` a través de ella — verificar en `Network → Static Routes` que quedó creada.
+> Ver evidencia: [09_ipsec_fase2_fga.png](screenshots/09_ipsec_fase2_fga.png)
 
-> Ver evidencia: [07_ipsec_fase1_fga.png](screenshots/07_ipsec_fase1_fga.png), [08_ipsec_fase2_fga.png](screenshots/08_ipsec_fase2_fga.png)
+---
 
-### 6.3 Fase 1 — FortiGate-B (FortiOS 7.6.2)
+### Paso 8. VPN IPsec en FortiGate-B
 
-**Ruta:** `VPN → IPsec Wizard → Create New`
+Configuración espejo de la de FortiGate-A.
 
-En 7.6.2 el asistente es una sola pantalla con tres bloques (**Remote Site**, **VPN Tunnel**, **Local FortiGate**), no pasos numerados. Nombre del asistente: `VPN-B-to-A`.
+**Ruta (FortiOS 7.6.2):** `VPN → VPN Wizard`
+
+En 7.6.2 el asistente es una sola pantalla con tres bloques (**VPN Tunnel**, **Remote Site**, **Local FortiGate**), no pasos numerados. Nombre del asistente: `VPN-B-to-A`.
 
 **Bloque VPN Tunnel:**
 
@@ -441,55 +415,58 @@ En 7.6.2 el asistente es una sola pantalla con tres bloques (**Remote Site**, **
 | Use Fortinet encapsulation | Desactivado |
 | NAT traversal | `Disable` |
 
-> **NAT traversal → `Disable`:** equivale al `No NAT between sites` de FortiGate-A. Ambos equipos están en el mismo segmento `203.0.113.0/29` y se ven con su IP real. No confundir con la política de NAT de la sección 5.2.
+> **NAT traversal → `Disable`:** equivale al `No NAT between sites` de FortiGate-A.
+
+> Ver evidencia: [10_ipsec_tunel_fgb.png](screenshots/10_ipsec_tunel_fgb.png)
 
 **Bloque Remote Site:**
 
 | Campo | Valor |
 |---|---|
-| Remote site device type | `FortiGate` (ícono de Fortinet) |
+| Remote site device type | `FortiGate` |
 | Remote site device | `Accessible and static` |
 | IP/FQDN | `203.0.113.2` |
 | Route this device's internet traffic through the remote site | Desactivado |
 | Remote site subnets that can access VPN | `20.25.30.0/25` (red de Usuarios) |
 
-> **Route this device's internet traffic...:** equivale a `Internet Access = None` de FortiGate-A. El lab no usa Internet, y por el túnel solo debe viajar el tráfico entre las dos LAN.
-> **Outgoing Interface:** en 7.6.2 no está en este bloque; se elige en el bloque **Local FortiGate**.
-
-### 6.4 Fase 2 — FortiGate-B
-
-Paso 3 del asistente (**Policy & Routing**):
+**Bloque Local FortiGate:**
 
 | Campo | Valor |
 |---|---|
+| Outgoing interface that binds to tunnel | `port1` |
+| Create and add interface to zone | Activado (valor por defecto) |
 | Local interface | `port2` (LAN-SERVIDOR) |
-| Local subnets | `20.25.30.128/28` (red del Servidor) |
-| Remote Subnets | `20.25.30.0/25` (red de Usuarios) |
-| Internet Access | `None` |
+| Local subnets that can access VPN | `20.25.30.128/28` (red del Servidor) |
+| Allow remote site's internet traffic through this device | Desactivado |
 
-> Ver evidencia: [09_ipsec_fase1_fgb.png](screenshots/09_ipsec_fase1_fgb.png), [10_ipsec_fase2_fgb.png](screenshots/10_ipsec_fase2_fgb.png)
+> **Tráfico de Internet desactivado en ambos sentidos:** equivale a `Internet Access = None` de FortiGate-A. Por el túnel solo debe viajar el tráfico entre las dos LAN.
 
-### 6.5 Rutas estáticas hacia el túnel
+> Ver evidencia: [11_ipsec_remoto_local_fgb.png](screenshots/11_ipsec_remoto_local_fgb.png)
 
-Si el wizard no las crea automáticamente, agregarlas manualmente:
+---
 
-**En FortiGate-A:** `Network → Static Routes → Create New`
+### Paso 9. Verificar rutas estáticas hacia el túnel
 
-| Campo | Valor |
-|---|---|
-| Destination | `20.25.30.128/28` |
-| Interface | `VPN-A-to-B` |
+**Ruta:** `Network → Static Routes`
 
-**En FortiGate-B:** `Network → Static Routes → Create New`
+Los asistentes crean estas rutas automáticamente. Si alguna no existe, crearla con `Create New`:
 
-| Campo | Valor |
-|---|---|
-| Destination | `20.25.30.0/25` |
-| Interface | `VPN-B-to-A` |
+| Equipo | Destination | Interface |
+|---|---|---|
+| FortiGate-A | `20.25.30.128/28` | `VPN-A-to-B` |
+| FortiGate-B | `20.25.30.0/25` | `VPN-B-to-A` |
 
-### 6.6 Políticas de Firewall para el tráfico VPN
+> No se configura ruta por defecto: `203.0.113.0/29` es una red directamente conectada y las LAN internas solo tienen ruta a través del túnel.
 
-El wizard suele crear estas políticas automáticamente; verificar/ajustar en `Policy & Objects → Firewall Policy`.
+> Ver evidencia: [12_rutas_estaticas.png](screenshots/12_rutas_estaticas.png)
+
+---
+
+### Paso 10. Verificar políticas de firewall de la VPN
+
+**Ruta:** `Policy & Objects → Firewall Policy`
+
+Los asistentes suelen crear estas políticas; verificar y ajustar si hace falta.
 
 **En FortiGate-A:**
 
@@ -515,15 +492,57 @@ El wizard suele crear estas políticas automáticamente; verificar/ajustar en `P
 | Action | `ACCEPT` |
 | NAT | ❌ Disabled |
 
-**En FortiGate-B:** políticas espejo, `VPN-B-to-A ↔ port2 (LAN-SERVIDOR)`, mismos criterios de origen/destino invertidos.
+> Ver evidencia: [13_politicas_vpn_fga.png](screenshots/13_politicas_vpn_fga.png)
 
-> **Importante:** el tráfico Usuario→Servidor solo tiene ruta por el túnel y política por el túnel. La política de NAT (`Usuarios-to-WAN`) no lo cubre en la práctica: `20.25.30.131` no es alcanzable por `port1`, ya que no existe ruta por defecto. Así se garantiza que la única forma de llegar al servidor es a través de la VPN.
+**En FortiGate-B:** políticas espejo, `VPN-B-to-A ↔ port2 (LAN-SERVIDOR)`, con origen y destino invertidos.
 
-> Ver evidencia: [11_politicas_vpn_fga.png](screenshots/11_politicas_vpn_fga.png), [12_politicas_vpn_fgb.png](screenshots/12_politicas_vpn_fgb.png)
+> Ver evidencia: [14_politicas_vpn_fgb.png](screenshots/14_politicas_vpn_fgb.png)
 
 ---
 
-## 7. Web Server (HTTPS)
+### Paso 11. Políticas de NAT hacia la WAN
+
+Se crean **después** de las políticas de la VPN, para que queden debajo de ellas en la lista.
+
+**Ruta:** `Policy & Objects → Firewall Policy → Create New`
+
+**FortiGate-A:**
+
+| Campo | Valor |
+|---|---|
+| Name | `Usuarios-to-WAN` |
+| Incoming Interface | `VLAN10 (LAN-USUARIOS)` |
+| Outgoing Interface | `port1 (WAN-NUBE)` |
+| Source | `all` |
+| Destination | `all` |
+| Schedule | `always` |
+| Service | `ALL` |
+| Action | `ACCEPT` |
+| NAT | ✅ Enabled — `Use Outgoing Interface Address` |
+
+> Ver evidencia: [15_politica_nat_fga.png](screenshots/15_politica_nat_fga.png)
+
+**FortiGate-B:**
+
+| Campo | Valor |
+|---|---|
+| Name | `Servidor-to-WAN` |
+| Incoming Interface | `port2 (LAN-SERVIDOR)` |
+| Outgoing Interface | `port1 (WAN-NUBE)` |
+| Source | `all` |
+| Destination | `all` |
+| Schedule | `always` |
+| Service | `ALL` |
+| Action | `ACCEPT` |
+| NAT | ✅ Enabled — `Use Outgoing Interface Address` |
+
+> Ver evidencia: [16_politica_nat_fgb.png](screenshots/16_politica_nat_fgb.png)
+
+> **Importante:** el tráfico Usuario→Servidor no queda cubierto por estas políticas de NAT: `20.25.30.131` no es alcanzable por `port1` porque no existe ruta por defecto. Así se garantiza que la única forma de llegar al servidor es a través de la VPN.
+
+---
+
+### Paso 12. Web Server (HTTPS)
 
 Servidor Ubuntu con Apache + certificado autofirmado (script completo: [`scripts/webserver-https.sh`](scripts/webserver-https.sh)):
 
@@ -546,30 +565,32 @@ Direccionamiento estático: `20.25.30.131/28`, gateway `20.25.30.130` (FortiGate
 
 ---
 
-## 8. Pruebas de Verificación
+### Paso 13. Pruebas de verificación
 
-**8.1 — Con el túnel activo:**
+**13.1 — Con el túnel activo**
 
 Desde el Usuario (VLAN 10, con IP por DHCP):
 ```
 traceroute 20.25.30.131
 ```
-Debe completar en pocos saltos, mostrando el tráfico atravesando la interfaz `VPN-A-to-B`.
+Debe completar en pocos saltos, atravesando la interfaz `VPN-A-to-B`.
 
 ```
 curl -k https://20.25.30.131/
 ```
 Debe responder con el contenido del Web Server.
 
-**8.2 — Con el túnel caído (para demostrar que NO hay ruta alterna):**
+> Ver evidencia: [17_traceroute_tunel_activo.png](screenshots/17_traceroute_tunel_activo.png)
+
+**13.2 — Con el túnel caído (no hay ruta alterna)**
 
 En cualquiera de los dos FortiGates: `VPN → IPsec Tunnels → VPN-A-to-B → Bring Down` (o deshabilitar temporalmente la Fase 1).
 
-Repetir el `traceroute` y el `curl` desde el Usuario — ambos deben **fallar/quedar colgados**, confirmando que no existe ninguna ruta alterna hacia el servidor sin el túnel.
+Repetir el `traceroute` y el `curl` desde el Usuario: ambos deben **fallar o quedar colgados**. Luego volver a levantar el túnel (`Bring Up`) y repetir la prueba para mostrar que se recupera.
 
-Volver a levantar el túnel (`Bring Up`) y repetir la prueba para mostrar que se recupera.
+> Ver evidencia: [18_traceroute_tunel_caido.png](screenshots/18_traceroute_tunel_caido.png), [19_ipsec_monitor.png](screenshots/19_ipsec_monitor.png)
 
-**8.3 — Verificación de NAT:**
+**13.3 — Verificación de NAT**
 
 Desde el Usuario, hacer ping a la PC local (permitir ICMP en el firewall de Windows si hace falta):
 ```
@@ -577,41 +598,45 @@ ping 203.0.113.1
 ```
 En `Log & Report → Forward Traffic` de FortiGate-A se ve el tráfico con la política `Usuarios-to-WAN` y la IP de origen traducida a `203.0.113.2`. Repetir desde el Web Server en FortiGate-B (origen traducido a `203.0.113.3`).
 
-> Ver evidencia: [13_traceroute_tunel_activo.png](screenshots/13_traceroute_tunel_activo.png), [14_traceroute_tunel_caido.png](screenshots/14_traceroute_tunel_caido.png), [15_ipsec_monitor.png](screenshots/15_ipsec_monitor.png), [20_prueba_nat.png](screenshots/20_prueba_nat.png)
+> Ver evidencia: [20_prueba_nat.png](screenshots/20_prueba_nat.png)
 
 ---
 
-## 9. Capturas de Pantalla
+## 4. Capturas de Pantalla
 
-| # | Archivo | Descripción |
-|---|---|---|
-| 00 | [`00_switch_vlan10.png`](screenshots/00_switch_vlan10.png) | Consola de SW-USUARIOS con `show vlan brief` y `show interfaces trunk`. |
-| 01 | [`01_cli_acceso_fga.png`](screenshots/01_cli_acceso_fga.png) | Terminal CLI de FortiGate-A mostrando la config inicial de `port1` (203.0.113.2/29) y el login de la GUI. |
-| 02 | [`02_interfaces_fga.png`](screenshots/02_interfaces_fga.png) | `Network → Interfaces` de FortiGate-A: port1 WAN, port2 físico y VLAN10. |
-| 03 | [`03_interfaz_vlan10_fga.png`](screenshots/03_interfaz_vlan10_fga.png) | Interfaz VLAN10 (ID 10 sobre port2) en FortiGate-A con IP `20.25.30.2/25`. |
-| 04 | [`04_dhcp_fga.png`](screenshots/04_dhcp_fga.png) | Servidor DHCP en la interfaz VLAN10 de FortiGate-A, rango `20.25.30.3–126`. |
-| 05 | [`05_interfaces_fgb.png`](screenshots/05_interfaces_fgb.png) | `Network → Interfaces` de FortiGate-B: port1 WAN y port2 LAN-SERVIDOR configuradas. |
-| 06 | [`06_ipsec_fase1_fga.png`](screenshots/06_ipsec_fase1_fga.png) | Fase 1 de la VPN en FortiGate-A, remote gateway `203.0.113.3`. |
-| 07 | [`07_ipsec_fase2_fga.png`](screenshots/07_ipsec_fase2_fga.png) | Fase 2 de la VPN en FortiGate-A, subredes local/remota. |
-| 08 | [`08_ipsec_fase1_fgb.png`](screenshots/08_ipsec_fase1_fgb.png) | Fase 1 de la VPN en FortiGate-B, remote gateway `203.0.113.2`. |
-| 09 | [`09_ipsec_fase2_fgb.png`](screenshots/09_ipsec_fase2_fgb.png) | Fase 2 de la VPN en FortiGate-B, subredes local/remota. |
-| 10 | [`10_politicas_vpn_fga.png`](screenshots/10_politicas_vpn_fga.png) | Políticas de firewall en FortiGate-A para el tráfico hacia/desde la VPN. |
-| 11 | [`11_politicas_vpn_fgb.png`](screenshots/11_politicas_vpn_fgb.png) | Políticas de firewall en FortiGate-B para el tráfico hacia/desde la VPN. |
-| 12 | [`12_traceroute_tunel_activo.png`](screenshots/12_traceroute_tunel_activo.png) | Traceroute exitoso desde el Usuario al Web Server con el túnel activo. |
-| 13 | [`13_traceroute_tunel_caido.png`](screenshots/13_traceroute_tunel_caido.png) | Traceroute fallido desde el Usuario al Web Server con el túnel caído — confirma que no hay ruta alterna. |
-| 14 | [`14_ipsec_monitor.png`](screenshots/14_ipsec_monitor.png) | `Monitor → IPsec Monitor` mostrando el túnel `Up` y luego `Down` durante la prueba. |
-| 15 | [`15_politica_nat_fga.png`](screenshots/15_politica_nat_fga.png) | Política `Usuarios-to-WAN` con NAT habilitado en FortiGate-A. |
-| 16 | [`16_politica_nat_fgb.png`](screenshots/16_politica_nat_fgb.png) | Política `Servidor-to-WAN` con NAT habilitado en FortiGate-B. |
-| 17 | [`17_prueba_nat.png`](screenshots/17_prueba_nat.png) | Ping desde el Usuario a la PC y log de Forward Traffic mostrando la IP traducida. |
+Numeradas en el orden en que se toman durante el procedimiento.
+
+| # | Archivo | Paso | Descripción |
+|---|---|---|---|
+| 01 | [`01_switch_vlan10.png`](screenshots/01_switch_vlan10.png) | 2 | Consola de SW-USUARIOS con `show vlan brief` y `show interfaces trunk`. |
+| 02 | [`02_cli_acceso_fga.png`](screenshots/02_cli_acceso_fga.png) | 3 | CLI de FortiGate-A con la config inicial de `port1` (203.0.113.2/29). |
+| 03 | [`03_cli_acceso_fgb.png`](screenshots/03_cli_acceso_fgb.png) | 4 | CLI de FortiGate-B con la config inicial de `port1` (203.0.113.3/29). |
+| 04 | [`04_interfaces_fga.png`](screenshots/04_interfaces_fga.png) | 5.1 | `Network → Interfaces` de FortiGate-A: port1 WAN, port2 físico y VLAN10. |
+| 05 | [`05_interfaz_vlan10_fga.png`](screenshots/05_interfaz_vlan10_fga.png) | 5.2 | Interfaz VLAN10 (ID 10 sobre port2) con IP `20.25.30.2/25`. |
+| 06 | [`06_dhcp_fga.png`](screenshots/06_dhcp_fga.png) | 5.3 | Servidor DHCP en VLAN10, rango `20.25.30.3–126`. |
+| 07 | [`07_interfaces_fgb.png`](screenshots/07_interfaces_fgb.png) | 6 | `Network → Interfaces` de FortiGate-B: port1 WAN y port2 LAN-SERVIDOR. |
+| 08 | [`08_ipsec_fase1_fga.png`](screenshots/08_ipsec_fase1_fga.png) | 7.1 | Fase 1 de la VPN en FortiGate-A, remote gateway `203.0.113.3`. |
+| 09 | [`09_ipsec_fase2_fga.png`](screenshots/09_ipsec_fase2_fga.png) | 7.2 | Fase 2 de la VPN en FortiGate-A, subredes local/remota. |
+| 10 | [`10_ipsec_tunel_fgb.png`](screenshots/10_ipsec_tunel_fgb.png) | 8 | Asistente de FortiGate-B (7.6.2), bloque VPN Tunnel. |
+| 11 | [`11_ipsec_remoto_local_fgb.png`](screenshots/11_ipsec_remoto_local_fgb.png) | 8 | Asistente de FortiGate-B (7.6.2), bloques Remote Site y Local FortiGate. |
+| 12 | [`12_rutas_estaticas.png`](screenshots/12_rutas_estaticas.png) | 9 | `Network → Static Routes` con la ruta hacia el túnel. |
+| 13 | [`13_politicas_vpn_fga.png`](screenshots/13_politicas_vpn_fga.png) | 10 | Políticas de firewall de la VPN en FortiGate-A. |
+| 14 | [`14_politicas_vpn_fgb.png`](screenshots/14_politicas_vpn_fgb.png) | 10 | Políticas de firewall de la VPN en FortiGate-B. |
+| 15 | [`15_politica_nat_fga.png`](screenshots/15_politica_nat_fga.png) | 11 | Política `Usuarios-to-WAN` con NAT habilitado. |
+| 16 | [`16_politica_nat_fgb.png`](screenshots/16_politica_nat_fgb.png) | 11 | Política `Servidor-to-WAN` con NAT habilitado. |
+| 17 | [`17_traceroute_tunel_activo.png`](screenshots/17_traceroute_tunel_activo.png) | 13.1 | Traceroute exitoso del Usuario al Web Server con el túnel activo. |
+| 18 | [`18_traceroute_tunel_caido.png`](screenshots/18_traceroute_tunel_caido.png) | 13.2 | Traceroute fallido con el túnel caído: no hay ruta alterna. |
+| 19 | [`19_ipsec_monitor.png`](screenshots/19_ipsec_monitor.png) | 13.2 | `Monitor → IPsec Monitor` con el túnel `Up` y luego `Down`. |
+| 20 | [`20_prueba_nat.png`](screenshots/20_prueba_nat.png) | 13.3 | Ping del Usuario a la PC y log de Forward Traffic con la IP traducida. |
 
 ---
 
-## 10. Estructura del Repositorio
+## 5. Estructura del Repositorio
 
 ```
 /
 ├── README.md                  ← este documento
-├── screenshots/                ← capturas numeradas de cada configuración
+├── screenshots/               ← capturas numeradas de cada configuración
 ├── scripts/
 │   ├── sw-usuarios.txt        ← configuración del switch (VLAN 10, trunk/access)
 │   ├── fortigate-a-cli.txt    ← acceso inicial FortiGate-A
@@ -625,4 +650,4 @@ En `Log & Report → Forward Traffic` de FortiGate-A se ve el tráfico con la po
     └── ArleneFernandez_20250730_P3.txt
 ```
 
-> Ajustar el número de práctica (`P3`) según lo indicado por el profesor. El video debe subirse al principio del repositorio (enlace ya colocado arriba en este README).
+> Ajustar el número de práctica (`P3`) según lo indicado por el profesor. El video debe subirse al principio del repositorio (enlace colocado arriba en este README).
