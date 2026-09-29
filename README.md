@@ -139,19 +139,10 @@ Los dos FortiGates y la PC local se conectan al mismo nodo **Cloud** de PNETLab,
 **En el laboratorio (PNETLab):**
 
 1. Clic derecho en el área de trabajo → `Add an object → Network`.
-2. Type: `Management(Cloud0)`, nombre `Nube-PNET`.
-3. Conectar `port1` de FortiGate-A a `Nube-PNET`.
-4. Conectar `port1` de FortiGate-B a `Nube-PNET`.
+2. Type: `Cloud(NumeroAdaptador)`, nombre `ISP`.
+3. Conectar `port1` de FortiGate-A a `ISP`.
+4. Conectar `port1` de FortiGate-B a `ISP`.
 5. Conectar `port2` de cada FortiGate a su LAN (Usuario / Web Server).
-
-**Verificación desde la PC (CMD):**
-```
-ping 203.0.113.2
-ping 203.0.113.3
-```
-Después abrir `https://203.0.113.2` y `https://203.0.113.3` en el navegador.
-
-> Ver evidencia: [00_nube_pnet_config.png](screenshots/00_nube_pnet_config.png)
 
 ---
 
