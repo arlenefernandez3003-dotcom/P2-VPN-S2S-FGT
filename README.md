@@ -299,7 +299,7 @@ Configuración espejo, apuntando de vuelta hacia FortiGate-A:
 | Remote IP Address | `203.0.113.2` |
 | Outgoing Interface | `port1` |
 | Authentication Method | `Pre-shared Key` |
-| Pre-shared Key | *(la misma clave configurada en FortiGate-A)* |
+| Pre-shared Key | *Arlene3003.* |
 | IKE Version | `2` |
 
 ### 6.4 Fase 2 — FortiGate-B
