@@ -270,7 +270,7 @@ Se configura un túnel **IPsec Site-to-Site** entre `203.0.113.2` (FortiGate-A) 
 | Remote IP Address | `203.0.113.3` |
 | Outgoing Interface | `port1` |
 | Authentication Method | `Pre-shared Key` |
-| Pre-shared Key | *(clave fuerte, la misma en ambos extremos)* |
+| Pre-shared Key | *Arlene3003.* |
 | IKE Version | `2` |
 
 > **NAT configuration → `No NAT between sites`:** ninguno de los dos FortiGates está detrás de un dispositivo que haga NAT. Ambos están en el mismo segmento `203.0.113.0/29` de la Nube PNET y se ven con su IP real, así que no hace falta NAT-Traversal. Se usa la misma opción en FortiGate-B (sección 6.3).
